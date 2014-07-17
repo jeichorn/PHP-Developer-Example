@@ -2,3 +2,4 @@ puphpet
 VagrantFile
 html
 .vagrant
+vendor

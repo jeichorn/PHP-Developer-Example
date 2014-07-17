@@ -1,0 +1,20 @@
+{
+    "name": "PHP Developer Example",
+    "description": "Example code that goes along with: https://www.gitbook.io/book/jeichorn/being-a-php-developer-the-nuts-and-bolts",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joshua Eichorn",
+            "email": "josh@bluga.net"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "4.*",
+        "aura/web": "2.0.*@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "jeichorn\\DevExample\\": "src/DevExample"
+        }
+    }
+}
