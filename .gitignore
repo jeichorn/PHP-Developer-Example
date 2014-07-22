@@ -8,4 +8,4 @@ vendor
 DigitalOcean/config.php
 DigitalOcean/vendor
 composer.phar
-.release-config.php
+deploy-config.php

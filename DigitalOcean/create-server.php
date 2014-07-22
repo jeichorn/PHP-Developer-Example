@@ -136,19 +136,22 @@ echo "region: {$droplet->region->name} - {$droplet->region->slug}\n";
 echo "image: {$droplet->image->name} - {$droplet->image->slug}\n";
 echo "size: {$droplet->size->slug} cpu({$droplet->size->vcpus}) memory({$droplet->size->memory}) disk({$droplet->size->disk})\n";
 
-if (!empty($argv[1]))
+if (!empty($argv[1]) && $argv[1] == 'go')
 {
     $baseDir = realpath(__DIR__.'/../');
 
-    // if we are in a real shell we could do this in one pipe, or maybe use rsync
-    //  but lets use a temp file instead so we work in the shell that github ships
-	echo "Bootstrapping server\n";
+    echo "Bootstrapping server\n";
 
     chdir($baseDir);
-    runCommand("scp ./DigitalOcean/setup.sh root@$serverIp:");
-    runCommand("scp ./DigitalOcean/run-puppet.sh root@$serverIp:");
+
+    // if we are in a real shell we could do this in one pipe, or maybe use rsync
+    //  but lets use a temp file instead so we work in the shell that github ships
     runCommand("tar cf puphpet.tar puphpet");
     runCommand("scp puphpet.tar root@$serverIp:/tmp/puphpet.tar");
+    runCommand("tar cf puphpet-user.tar puphpet-user");
+    runCommand("scp puphpet-user.tar root@$serverIp:/tmp/puphpet-user.tar");
+
+    runCommand("scp ./DigitalOcean/setup.sh root@$serverIp:");
     runCommand("ssh root@$serverIp 'sh -c /root/setup.sh'");
 }
 
