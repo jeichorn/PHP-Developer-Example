@@ -120,6 +120,8 @@ if (!empty($droplet->networks))
 {
 	foreach($droplet->networks as $network)
 	{
+        if ($network->type == "public")
+            $serverIp = $network->ipAddress;
 		echo "  $network->type: $network->ipAddress\n";
 	}
 }
@@ -130,3 +132,19 @@ else
 echo "region: {$droplet->region->name} - {$droplet->region->slug}\n";
 echo "image: {$droplet->image->name} - {$droplet->image->slug}\n";
 echo "size: {$droplet->size->slug} cpu({$droplet->size->vcpus}) memory({$droplet->size->memory}) disk({$droplet->size->disk})\n";
+
+if (!empty($argv[1]))
+{
+    $baseDir = realpath(__DIR__.'/../');
+
+    // if we are in a real shell we could do this in one pipe, or maybe use rsync
+    //  but lets use a temp file instead so we work in the shell that github ships
+	echo "Bootstrapping server\n";
+    passthru("scp setup.sh root@$serverIp:");
+
+    chdir($baseDir);
+//    passthru("tar cf puphpet.tar puphpet");
+//    passthru("scp puphpet.tar root@$serverIp:/tmp/puphpet.tar");
+    passthru("ssh root@$serverIp 'sh -c /root/setup.sh'");
+
+}
