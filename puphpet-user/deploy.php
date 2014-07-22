@@ -7,6 +7,9 @@ if (!file_exists("$home/logs"))
 
 $LOGFILE = "$home/logs/deploy-log-".date('Ymd').".log";
 $DEPLOYED = false;
+$FORCE = false;
+if (!empty($argv[1]) && $argv[1] == 'force')
+	$FORCE = true;
 
 set_exception_handler(function ($e) use($config, $LOGFILE) {
 echo "Failure\n$e";
@@ -59,7 +62,7 @@ if (!file_exists($config['deploy-dir']."/.git"))
 // check if need to do deploy
 $tag = $release->tag_name;
 exec("git status", $output, $code);
-if ($code == 0 && strstr($output[0], $tag))
+if ($code == 0 && strstr($output[0], $tag) && !$FORCE)
 {
 	echo date('Y-m-d H:i:s T') . " - No deploy needed\n";
 	
@@ -87,7 +90,7 @@ function gitHubApi($url, $config)
 {
     $c = curl_init($url);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($c, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+    curl_setopt($c, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_setopt($c, CURLOPT_USERPWD, $config['token'].':x-oauth-basic');
     curl_setopt($c, CURLOPT_USERAGENT, "PHP Deploy Script 1.0");
 
@@ -108,3 +111,4 @@ function run_cmd($cmd)
         throw new Exception("$cmd failed with code $code");
     }
 }
+
