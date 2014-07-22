@@ -140,11 +140,11 @@ if (!empty($argv[1]))
     // if we are in a real shell we could do this in one pipe, or maybe use rsync
     //  but lets use a temp file instead so we work in the shell that github ships
 	echo "Bootstrapping server\n";
-    passthru("scp setup.sh root@$serverIp:");
 
     chdir($baseDir);
-//    passthru("tar cf puphpet.tar puphpet");
-//    passthru("scp puphpet.tar root@$serverIp:/tmp/puphpet.tar");
+    passthru("scp ./DigitalOcean/setup.sh root@$serverIp:");
+    passthru("tar cf puphpet.tar puphpet");
+    passthru("scp puphpet.tar root@$serverIp:/tmp/puphpet.tar");
     passthru("ssh root@$serverIp 'sh -c /root/setup.sh'");
 
 }
