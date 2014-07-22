@@ -35,10 +35,9 @@ foreach($defaults as $k => $v)
 }
 if (!empty($config['ssh-identity']))
 {
-	$config['sshKeys'][] = file_get_contents($config['ssh-identity'].'.pub');
+	$config['sshKeys'][] = file_get_contents(str_replace('~', $home, $config['ssh-identity'].'.pub'));
 }
-	
-	
+
 	
 $dropletApi = $do->droplet();
 
@@ -78,6 +77,28 @@ if (empty($droplet))
 			echo "$image->name - $image->slug\n";
 		}
 	}
+	
+	$keys = [];
+	$keysApi = $do->key();
+	foreach($config['sshKeys'] as $keyString)
+	{
+		if (preg_match('/^([^ ]+\s+[^ ]+)\s*(.*)$/', $keyString, $match))
+		{
+			try
+			{
+				$key = $keysApi->getByFingerprint($match[1]);
+			}
+			catch(Exception $e)
+			{
+				// 404 throws an exception
+			}
+			
+			if (empty($key))
+				$key = $keysApi->create($match[2], $match[1]);
+			
+			$keys[] = $key->id;
+		}
+	}
 
 	$droplet = $dropletApi->create(
 		$config['name'],
@@ -87,7 +108,7 @@ if (empty($droplet))
 		$config['backups'],
 		$config['ipv6'],
 		$config['privateNetworking'],
-		$config['sshKeys']
+		$keys
 	);
 }
 
@@ -95,9 +116,16 @@ if (empty($droplet))
 echo "name: $droplet->name - $droplet->id\n";
 echo "status: {$droplet->status}\n";
 echo "networking\n";
-foreach($droplet->networks as $network)
+if (!empty($droplet->networks))
 {
-	echo "  $network->type: $network->ipAddress\n";
+	foreach($droplet->networks as $network)
+	{
+		echo "  $network->type: $network->ipAddress\n";
+	}
+}
+else
+{
+	echo "Initializing\n";
 }
 echo "region: {$droplet->region->name} - {$droplet->region->slug}\n";
 echo "image: {$droplet->image->name} - {$droplet->image->slug}\n";
