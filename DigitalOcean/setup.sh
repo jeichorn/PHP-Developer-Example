@@ -6,6 +6,7 @@ cd /vagrant/puphpet
 ./shell/initial-setup.sh /vagrant/puphpet
 ./shell/install-ruby.sh /vagrant/puphpet
 ./shell/install-puppet.sh /vagrant/puphpet
+rvm_reload_flag=1 source /usr/local/rvm/scripts/rvm
 mkdir -p /etc/facter/facts.d
 echo '{"vm_target_key":"digital_ocean"}' > /etc/facter/facts.d/info.json
 cd /vagrant/puphpet/puppet

@@ -19,7 +19,7 @@ $adapter = new BuzzAdapter($config['token']);
 $do = new DigitalOceanV2($adapter);
 
 $defaults = [
-	'size' => '1024mb',
+	'size' => '1gb',
 	'region' => 'nyc2',
 	'image' => null,
 	'name' => 'awesome',
@@ -100,6 +100,9 @@ if (empty($droplet))
 		}
 	}
 
+    //$sizesApi = $do->size();
+    //var_dump($sizesApi->getAll());
+
 	$droplet = $dropletApi->create(
 		$config['name'],
 		$config['region'],
@@ -142,9 +145,19 @@ if (!empty($argv[1]))
 	echo "Bootstrapping server\n";
 
     chdir($baseDir);
-    passthru("scp ./DigitalOcean/setup.sh root@$serverIp:");
-    passthru("tar cf puphpet.tar puphpet");
-    passthru("scp puphpet.tar root@$serverIp:/tmp/puphpet.tar");
-    passthru("ssh root@$serverIp 'sh -c /root/setup.sh'");
+    runCommand("scp ./DigitalOcean/setup.sh root@$serverIp:");
+    runCommand("scp ./DigitalOcean/run-puppet.sh root@$serverIp:");
+    runCommand("tar cf puphpet.tar puphpet");
+    runCommand("scp puphpet.tar root@$serverIp:/tmp/puphpet.tar");
+    runCommand("ssh root@$serverIp 'sh -c /root/setup.sh'");
+}
 
+function runCommand($cmd)
+{
+    passthru($cmd, $code);
+    if ($code != 0)
+    {
+        echo "$cmd failed\n";
+        exit(1);
+    }
 }
