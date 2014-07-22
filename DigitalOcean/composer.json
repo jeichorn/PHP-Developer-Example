@@ -1,0 +1,5 @@
+{
+    "require": {
+        "toin0u/digitalocean-v2": "0.1.*@dev"
+    }
+}

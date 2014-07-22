@@ -1,5 +1,9 @@
 puphpet
+puphpet-*
 VagrantFile
 html
 .vagrant
 vendor
+DigitalOcean/config.php
+DigitalOcean/vendor
+composer.phar
