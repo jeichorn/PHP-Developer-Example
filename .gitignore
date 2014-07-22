@@ -1,6 +1,6 @@
 puphpet
-puphpet-*
 puphpet.tar
+puphpet-user.tar
 VagrantFile
 html
 .vagrant
