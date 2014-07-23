@@ -13,10 +13,12 @@ cron { "web-deploy":
 file { "/home/web-deploy/deploy.php":
     ensure => "file",
     source => "/vagrant/puphpet-user/deploy.php",
+    subscribe => User["web-deploy"],
 }
 file { "/home/web-deploy/.deploy-config.php":
     ensure => "file",
     source => "/vagrant/puphpet-user/deploy-config.php",
+    subscribe => User["web-deploy"],
 }
 package { "php5-curl":
     ensure => installed,
