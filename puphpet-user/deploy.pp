@@ -1,6 +1,6 @@
 user { "web-deploy":
     shell => "/bin/bash",
-    groups => ['www-data'],
+    groups => ['www-data','www-user'],
     ensure => present,
     managehome => true,
 }
